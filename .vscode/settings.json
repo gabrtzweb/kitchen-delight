@@ -55,7 +55,8 @@
         "**/UserSettings/": true,
         "**/temp/": true,
         "**/Temp/": true,
-        "**/Packages/": true
+        "**/Packages/": true,
+        "KitchenDelight/.vscode/": true,
     },
     "files.associations": {
         "*.asset": "yaml",
