@@ -12,6 +12,9 @@ GameObject:
   - component: {fileID: 2715547713935224078}
   - component: {fileID: 7958025061103401912}
   - component: {fileID: 6779453202185150828}
+  - component: {fileID: 2738693564644558691}
+  - component: {fileID: 1391097366818617907}
+  - component: {fileID: 6286133370087055961}
   m_Layer: 3
   m_Name: Player2
   m_TagString: Player
@@ -83,7 +86,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &6779453202185150828
 MonoBehaviour:
@@ -97,10 +100,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6432cebe37c6964a8e752e5df253dcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 8
-  rotationSpeed: 15
+  moveSpeed: 6
+  rotationSpeed: 12
   controlScheme: Player2
   animator: {fileID: 2276027594044577005}
+  inputReader: {fileID: 2738693564644558691}
+  movement: {fileID: 1391097366818617907}
+  actions: {fileID: 6286133370087055961}
+--- !u!114 &2738693564644558691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4570480765151089001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3e3be11294b61640aaefd6999730108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
+  controlScheme: Player2
+--- !u!114 &1391097366818617907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4570480765151089001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544c71d1d3ba30c4f9e31d739479089b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  moveSpeed: 6
+  acceleration: 40
+  rotationSpeed: 8
+  dashDistance: 2.8
+  dashDuration: 0.2
+  dashCooldown: 0.4
+  postDashFacingLockTime: 0.18
+  applyRecommendedRigidbodySettings: 1
+  stopImmediatelyAfterDash: 1
+--- !u!114 &6286133370087055961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4570480765151089001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dba12d6698df5564692c4ec98c411300, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerActions
+  logActions: 0
 --- !u!1001 &2854653625867343443
 PrefabInstance:
   m_ObjectHideFlags: 0

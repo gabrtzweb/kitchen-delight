@@ -750,6 +750,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1391097366818617907, guid: c2c969dbbe382ef4b80fbb6f1e8d8718, type: 3}
+      propertyPath: postDashFacingLockTime
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 1471560218957332104, guid: c2c969dbbe382ef4b80fbb6f1e8d8718, type: 3}
       propertyPath: m_Layer
       value: 0
