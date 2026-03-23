@@ -18,11 +18,13 @@ public class PlayerController : MonoBehaviour
 
     private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     private static readonly int IsDashingHash = Animator.StringToHash("IsDashing");
+    private static readonly int IsHoldingHash = Animator.StringToHash("IsHolding");
     private static readonly int InteractHash = Animator.StringToHash("Interact");
     private static readonly int UseHash = Animator.StringToHash("Use");
 
     private bool hasIsMovingParameter;
     private bool hasIsDashingParameter;
+    private bool hasIsHoldingParameter;
     private bool hasInteractParameter;
     private bool hasUseParameter;
 
@@ -67,6 +69,11 @@ public class PlayerController : MonoBehaviour
             animator.SetBool(IsDashingHash, movement.IsDashing);
         }
 
+        if (hasIsHoldingParameter)
+        {
+            animator.SetBool(IsHoldingHash, actions != null && actions.IsCarrying);
+        }
+
         if (inputReader.InteractPressedThisFrame && hasInteractParameter)
         {
             animator.SetTrigger(InteractHash);
@@ -83,6 +90,8 @@ public class PlayerController : MonoBehaviour
         if (animator == null)
         {
             hasIsMovingParameter = false;
+            hasIsDashingParameter = false;
+            hasIsHoldingParameter = false;
             hasInteractParameter = false;
             hasUseParameter = false;
             return;
@@ -90,6 +99,7 @@ public class PlayerController : MonoBehaviour
 
         hasIsMovingParameter = HasParameter(IsMovingHash, AnimatorControllerParameterType.Bool);
         hasIsDashingParameter = HasParameter(IsDashingHash, AnimatorControllerParameterType.Bool);
+        hasIsHoldingParameter = HasParameter(IsHoldingHash, AnimatorControllerParameterType.Bool);
         hasInteractParameter = HasParameter(InteractHash, AnimatorControllerParameterType.Trigger);
         hasUseParameter = HasParameter(UseHash, AnimatorControllerParameterType.Trigger);
     }

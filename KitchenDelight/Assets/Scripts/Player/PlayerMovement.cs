@@ -13,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField, Min(0f)] private float dashCooldown = 0.4f;
     [SerializeField, Range(0f, 1f)] private float playerPushResistance = 0.75f;
     [SerializeField, Min(0f)] private float maxPlayerPushSpeed = 2.4f;
+    [SerializeField, Min(0f)] private float itemPushForce = 12f;
+    [SerializeField] private bool lockToGroundPlane = true;
     [SerializeField] private bool applyRecommendedRigidbodySettings = true;
     [SerializeField] private bool stopImmediatelyAfterDash = true;
 
@@ -23,9 +25,12 @@ public class PlayerMovement : MonoBehaviour
     private float dashCooldownRemaining;
     private bool wasDashingLastFixedStep;
     private float moveInputMagnitude;
+    private float lockedGroundY;
+    private Vector3 currentMoveDirection;
 
     public float CurrentPlanarSpeed { get; private set; }
     public bool IsDashing => dashTimeRemaining > 0f;
+    public Vector3 FacingDirection => lastFacingDirection;
 
     public void Configure(float configuredMoveSpeed, float configuredRotationSpeed)
     {
@@ -48,6 +53,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        lockedGroundY = transform.position.y;
         rb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         if (applyRecommendedRigidbodySettings)
@@ -88,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 move = input.Move;
         moveInputMagnitude = move.magnitude;
         Vector3 desiredDirection = new Vector3(move.x, 0f, move.y);
+        currentMoveDirection = desiredDirection.sqrMagnitude > 0.0001f ? desiredDirection.normalized : Vector3.zero;
 
         if (IsDashing)
         {
@@ -98,6 +105,7 @@ public class PlayerMovement : MonoBehaviour
             CurrentPlanarSpeed = dashVelocity.magnitude;
             wasDashingLastFixedStep = true;
             RotateTowardFacing();
+            ApplyGroundPlaneLock();
             return;
         }
 
@@ -140,6 +148,7 @@ public class PlayerMovement : MonoBehaviour
         CurrentPlanarSpeed = newPlanarVelocity.magnitude;
 
         RotateTowardFacing();
+        ApplyGroundPlaneLock();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -154,6 +163,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyPlayerPushResistance(Collision collision)
     {
+        if (collision.rigidbody != null && collision.rigidbody != rb)
+        {
+            bool isOtherPlayer = collision.rigidbody.TryGetComponent<PlayerMovement>(out _);
+            if (!isOtherPlayer)
+            {
+                if (!collision.rigidbody.isKinematic && itemPushForce > 0f && moveInputMagnitude > 0.1f && currentMoveDirection.sqrMagnitude > 0.0001f)
+                {
+                    collision.rigidbody.AddForce(currentMoveDirection * itemPushForce, ForceMode.Acceleration);
+                }
+
+                return;
+            }
+        }
+
         if (IsDashing)
         {
             return;
@@ -220,5 +243,27 @@ public class PlayerMovement : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(lastFacingDirection, Vector3.up);
         Quaternion smoothedRotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
         rb.MoveRotation(smoothedRotation);
+    }
+
+    private void ApplyGroundPlaneLock()
+    {
+        if (!lockToGroundPlane)
+        {
+            return;
+        }
+
+        Vector3 velocity = rb.linearVelocity;
+        if (Mathf.Abs(velocity.y) > 0.0001f)
+        {
+            velocity.y = 0f;
+            rb.linearVelocity = velocity;
+        }
+
+        Vector3 position = rb.position;
+        if (Mathf.Abs(position.y - lockedGroundY) > 0.0001f)
+        {
+            position.y = lockedGroundY;
+            rb.MovePosition(position);
+        }
     }
 }
